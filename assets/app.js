@@ -20,6 +20,7 @@ var initialTrainTime = "";
 var minFrequency = "";
 
 
+
 // Capture button click
 $("#add-user").on("click", function(event) {
     event.preventDefault();
@@ -31,14 +32,14 @@ destination = $("#destination-input").val().trim();
 initialTrainTime = $("#time-input").val().trim();
 minFrequency = $("#frequency-input").val().trim();
 
+
+
 // Code for the push
 database.ref().push({
 
     trainName: trainName,
-        destination: destination,
-        initialTrainTime: initialTrainTime,
-        minFrequency: minFrequency,
-        dateAdded: moment().format("MMM Do, YYYY hh:mm:ss")
+    destination: destination,
+    minFrequency: minFrequency 
 
 }); 
 
@@ -49,18 +50,31 @@ database.ref().on("child_added", function(childSnapshot) {
     console.log(childSnapshot.val());
     var trainName = childSnapshot.val().trainName
     var destination = childSnapshot.val().destination
-    // var initialTrainTime = childSnapshot.val().initialTrainTime
+    var initialTrainTime = childSnapshot.val().initialTrainTime
     var minFrequency = childSnapshot.val().minFrequency
     var nextArrival = childSnapshot.val().nextArrival
     var minutesAway = childSnapshot.val().minutesAway
-    // var dateAdded = childSnapshot.val().dateAdded
+
+
+var firstTime = 0;
+var firstTimeConverted = moment(firstTime, "HH:mm").subtract(1, "years");
+var currentTime = moment();
+var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+var timeRemaining = diffTime % minFrequency;
+var minutesAway = minFrequency - timeRemaining;
+var nextArrival= moment().add(minutesAway,"minutes").format("hh:mm");
+
+
     $("#train-table > tbody").append(
         $("<tr>").append(
             $("<td>").text(trainName),
             $("<td>").text(destination),
+            // $("<td>").text(initialTrainTime),
             $("<td>").text(minFrequency),
             $("<td>").text(nextArrival),
             $("<td>").text(minutesAway),
+            
+            
 
         )
     )
